@@ -278,5 +278,13 @@ namespace Uno.UI.Samples.Tests.Windows_Storage
 
 			Assert.IsNull(SUT.Values["ThisKeyDoesNotExist"]);
 		}
+
+		[TestMethod]
+		public void When_Container_Values_Type()
+		{
+			var SUT = ApplicationData.Current.LocalSettings;
+			var instance = SUT.Values;
+			Assert.IsInstanceOfType(SUT.Values, typeof(ApplicationDataContainerSettings));
+		}
 	}
 }

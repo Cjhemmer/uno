@@ -25,6 +25,11 @@ public partial class ApplicationDataCompositeValue :
 	{
 	}
 
+	internal ApplicationDataCompositeValue(Dictionary<string, object?> dictionary)
+	{
+		_dictionary = dictionary ?? throw new ArgumentNullException(nameof(dictionary));
+	}
+
 	/// <summary>
 	/// Occurs when the observable map has changed.
 	/// </summary>
@@ -188,8 +193,7 @@ public partial class ApplicationDataCompositeValue :
 	/// </summary>
 	/// <param name="item">Item to remove.</param>
 	/// <returns>True if found.</returns>
-	public bool Remove(KeyValuePair<string, object?> item) =>
-		Contains(item) && Remove(item.Key);
+	public bool Remove(KeyValuePair<string, object?> item) => Contains(item) && Remove(item.Key);
 
 	/// <summary>
 	/// Returns an enumerator for the property set.

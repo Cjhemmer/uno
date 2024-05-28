@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using System.Text;
+using System.Text.Json;
 using Uno.Extensions.Specialized;
 
 namespace Windows.Storage
@@ -33,6 +33,7 @@ namespace Windows.Storage
 			typeof(uint),
 			typeof(ulong),
 			typeof(Uri),
+			typeof(ApplicationDataCompositeValue)
 		};
 
 		public static object Deserialize(string value)
@@ -57,6 +58,11 @@ namespace Windows.Storage
 				{
 					return TimeSpan.Parse(valueField, CultureInfo.InvariantCulture);
 				}
+				else if (dataType == typeof(ApplicationDataCompositeValue))
+				{
+					var data = JsonSerializer.Deserialize<Dictionary<string, object>>(valueField);
+					return new ApplicationDataCompositeValue(data);
+				}
 				else
 				{
 					return Convert.ChangeType(valueField, dataType, CultureInfo.InvariantCulture);
@@ -75,14 +81,26 @@ namespace Windows.Storage
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (!SupportedTypes.Contains(value.GetType()))
+			var type = value.GetType();
+
+			if (!SupportedTypes.Contains(type))
 			{
 				throw new NotSupportedException($"Type {value.GetType()} is not supported");
 			}
 
-			var valueAsString = Convert.ToString(value, CultureInfo.InvariantCulture);
+			string serializedValue;
+			if (type == typeof(ApplicationDataCompositeValue))
+			{
+				var composite = (ApplicationDataCompositeValue)value;
+				var dictionary = composite.AsReadOnly();
+				serializedValue = JsonSerializer.Serialize(dictionary);
+			}
+			else
+			{
+				serializedValue = Convert.ToString(value, CultureInfo.InvariantCulture);
+			}
 
-			return value.GetType().FullName + ":" + valueAsString;
+			return value.GetType().FullName + ":" + serializedValue;
 		}
 	}
 }

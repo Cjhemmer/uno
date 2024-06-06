@@ -1,5 +1,5 @@
 ﻿#nullable enable
-
+#if WINAPPSDK || HAS_UNO
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -226,3 +226,4 @@ public sealed partial class DiagnosticsOverlay
 		}
 	}
 }
+#endif
